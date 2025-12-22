@@ -1,0 +1,4 @@
+/reggen
+/out/
+/src/*.o
+/src/*.d

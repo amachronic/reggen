@@ -1,0 +1,16 @@
+// This file is marked CC0 1.0.
+// To view a copy of this mark, visit https://creativecommons.org/publicdomain/zero/1.0/
+
+// Register definitions common to ARM Cortex-M7 processors
+
+CACHE @ 0xe000ef00 : block {
+    ICIALLU  @ 0x50 : reg
+    ICIMVAU  @ 0x58 : reg
+    DCIMVAC  @ 0x5c : reg
+    DCISW    @ 0x60 : reg
+    DCCMVAU  @ 0x64 : reg
+    DCCMVAC  @ 0x68 : reg
+    DCCSW    @ 0x6c : reg
+    DCCIMVAC @ 0x70 : reg
+    DCCISW   @ 0x74 : reg
+}

@@ -1,0 +1,865 @@
+// This file is marked CC0 1.0.
+// To view a copy of this mark, visit https://creativecommons.org/publicdomain/zero/1.0/
+
+// Register definitions for Ingenic X1000
+
+LCD @ 0xb3050000 : block {
+    CFG @ 0x00 : reg {
+        17 INVDAT
+    }
+
+    CTRL @ 0x30 : reg {
+        30 28 BURST : enum { 0 = 4WORD; 1 = 8WORD; 2 = 16WORD; 3 = 32WORD; 4 = 64WORD }
+        -- 13 EOFM
+        -- 12 SOFM
+        -- 10 IFUM
+        -- 07 QDM
+        -- 06 BEDN
+        -- 05 PEDN
+        -- 03 ENABLE
+        02 00 BPP : enum { 4 = 15BIT_OR_16BIT; 5 = 18BIT_OR_24BIT; 6 = 24BIT_COMPRESSED; 7 = 30BIT }
+    }
+
+    STATE @ 0x34 : reg {
+        07 QD
+        05 EOF
+        04 SOF
+        02 IFU
+    }
+
+    OSDCTRL @ 0x104 : reg
+    BGC @ 0x10c : reg
+    DAH @ 0x10 : reg
+    DAV @ 0x14 : reg
+    VAT @ 0x0c : reg
+    VSYNC @ 0x04 : reg
+    HSYNC @ 0x08 : reg
+    IID @ 0x38 : reg
+    DA @ 0x40 : reg
+
+    MCFG @ 0xa0 : reg {
+        09 08 CWIDTH : enum { 0 = 16BIT_OR_9BIT; 1 = 8BIT; 2 = 18BIT; 3 = 24BIT }
+    }
+
+    MCFG_NEW @ 0xb8 : reg {
+        15 13 DWIDTH : enum { 0 = 8BIT; 1 = 9BIT; 2 = 16BIT; 3 = 18BIT; 4 = 24BIT }
+        09 08 DTIMES : enum { 0 = 1TIME; 1 = 2TIME; 2 = 3TIME }
+        -- 11 6800_MODE
+        -- 10 CMD_9BIT
+        -- 05 CSPLY
+        -- 04 RSPLY
+        -- 03 CLKPLY
+        -- 02 DTYPE : enum { 0 = PARALLEL; 1 = SERIAL }
+        -- 01 CTYPE : enum { 0 = PARALLEL; 1 = SERIAL }
+        -- 00 FMT_CONV
+    }
+
+    MCTRL @ 0xa4 : reg {
+        10 NARROW_TE
+        09 TE_INV
+        08 NOT_USE_TE
+        07 DCSI_SEL
+        06 MIPI_SLCD
+        04 FAST_MODE
+        03 GATE_MASK
+        02 DMA_MODE
+        01 DMA_START
+        00 DMA_TX_EN
+    }
+
+    MSTATE @ 0xa8 : reg {
+        31 16 LCD_ID
+        -- 00 BUSY
+    }
+
+    MDATA @ 0xac : reg {
+        31 30 TYPE : enum { 0 = DAT; 1 = CMD }
+        23 00 DATA
+    }
+
+    WTIME @ 0xb0 : reg {
+        31 24 DHTIME
+        23 16 DLTIME
+        15 08 CHTIME
+        07 00 CLTIME
+    }
+
+    TASH @ 0xb4 : reg {
+        15 08 TAH
+        07 00 TAS
+    }
+
+    SMWT @ 0xbc : reg
+}
+
+AIC @ 0xb0020000 : block {
+    CFG @ 0x00 : reg {
+        27 24 RFTH
+        20 16 TFTH
+        -- 12 MSB
+        -- 10 IBCKD
+        -- 09 ISYNCD
+        -- 08 DMODE
+        -- 07 CDC_SLAVE
+        -- 06 LSMP
+        -- 05 ICDC
+        -- 04 AUSEL
+        -- 03 RST
+        -- 02 BCKD
+        -- 01 SYNCD
+        -- 00 ENABLE
+    }
+
+    CCR @ 0x04 : reg {
+        enum SAMPLE_SIZE {
+            0 = 8BIT
+            1 = 16BIT
+            2 = 18BIT
+            3 = 20BIT
+            4 = 24BIT
+        }
+
+        -- 28 PACK16
+        26 24 CHANNEL : enum { 0 = MONO; 1 = STEREO }
+        21 19 OSS : SAMPLE_SIZE
+        18 16 ISS : SAMPLE_SIZE
+        -- 15 RDMS
+        -- 14 TDMS
+        -- 11 M2S
+        -- 10 ENDSW
+        -- 09 ASVTSU
+        -- 08 TFLUSH
+        -- 07 RFLUSH
+        -- 06 EROR
+        -- 05 ETUR
+        -- 04 ERFS
+        -- 03 ETFS
+        -- 02 ENLBF
+        -- 01 ERPL
+        -- 00 EREC
+    }
+
+    I2SCR @ 0x10 : reg {
+        17 RFIRST
+        16 SWLH
+        13 ISTPBK
+        12 STPBK
+        04 ESCLK
+        00 AMSL
+    }
+
+    SR @ 0x14 : reg {
+        29 24 RFL
+        13 08 TFL
+        -- 06 ROR
+        -- 05 TUR
+        -- 04 RFS
+        -- 03 TFS
+    }
+
+    I2SSR @ 0x1c : reg {
+        05 CHBSY
+        04 TBSY
+        03 RBSY
+        02 BSY
+    }
+
+    I2SDIV @ 0x30 : reg
+    DR @ 0x34 : reg
+    SPENA @ 0x80 : reg
+}
+
+RTC @ 0xb0003000 : block {
+    CR @ 0x00 : reg {
+        -- 07 WRDY
+        -- 06 1HZ
+        -- 05 1HZIE
+        -- 04 AF
+        -- 03 AIE
+        -- 02 AE
+        -- 01 SELEXC
+        -- 00 ENABLE
+    }
+
+    SR @ 0x04 : reg
+    SAR @ 0x08 : reg
+
+    GR @ 0x0c : reg {
+        -- 31 LOCK
+        25 16 ADJC
+        15 00 NC1HZ
+    }
+
+    HCR @ 0x20 : reg
+    HWFCR @ 0x24 : reg
+    HRCR @ 0x28 : reg
+
+    HWCR @ 0x2c : reg {
+        31 03 EPDET
+        -- 01 EALM
+    }
+
+    HWRSR @ 0x30 : reg {
+        08 APD
+        05 HR
+        04 PPR
+        01 PIN
+        00 ALM
+    }
+
+    HSPR @ 0x34 : reg
+
+    WENR @ 0x3c : reg {
+        -- 31 WEN
+        15 00 WENPAT
+    }
+
+    WKUPPINCR @ 0x48 : reg
+}
+
+CPM @ 0xb0000000 : block {
+    enum SEL_PLL {
+        0 = STOP
+        1 = SCLK_A
+        2 = MPLL
+    }
+
+    enum SEL_PLL_1BIT {
+        0 = SCLK_A
+        1 = MPLL
+    }
+
+    CCR @ 0x00 : reg {
+        31 30 SEL_SRC  : enum { 0 = STOP; 1 = EXCLK; 2 = APLL }
+        29 28 SEL_CPLL : SEL_PLL
+        27 26 SEL_H0PLL : SEL_PLL
+        25 24 SEL_H2PLL : SEL_PLL
+        -- 23 GATE_SCLKA
+        -- 22 CE_CPU
+        -- 21 CE_AHB0
+        -- 20 CE_AHB2
+        19 16 PDIV
+        15 12 H2DIV
+        11 08 H0DIV
+        07 04 L2DIV
+        03 00 CDIV
+    }
+
+    CSR @ 0xd4 : reg {
+        31 SRC_MUX
+        30 CPU_MUX
+        29 AHB0_MUX
+        28 AHB2_MUX
+        27 DDR_MUX
+        02 H2DIV_BUSY
+        01 H0DIV_BUSY
+        00 CDIV_BUSY
+    }
+
+    DDRCDR @ 0x2c : reg {
+        31 30 CLKSRC : SEL_PLL
+        -- 29 CE
+        -- 28 BUSY
+        -- 27 STOP
+        -- 26 GATE_EN
+        -- 25 CHANGE_EN
+        -- 24 FLAG
+        03 00 CLKDIV
+    }
+
+    MACCDR @ 0x54 : reg {
+        -- 31 CLKSRC : SEL_PLL_1BIT
+        -- 29 CE
+        -- 28 BUSY
+        -- 27 STOP
+        07 00 CLKDIV
+    }
+
+    I2SCDR @ 0x60 : reg {
+        -- 31 PCS : SEL_PLL_1BIT
+        -- 30 CS : enum { 0 = EXCLK; 1 = PLL }
+        -- 29 CE
+        21 13 DIV_M
+        12 00 DIV_N
+    }
+
+    I2SCDR1 @ 0x70 : reg
+
+    LPCDR @ 0x64 : reg {
+        -- 31 CLKSRC : SEL_PLL_1BIT
+        -- 28 CE
+        -- 27 BUSY
+        -- 26 STOP
+        07 00 CLKDIV
+    }
+
+    MSC0CDR @ 0x68 : reg {
+        -- 31 CLKSRC : SEL_PLL_1BIT
+        -- 29 CE
+        -- 28 BUSY
+        -- 27 STOP
+        -- 15 S_CLK0_SEL : enum { 0 = 90DEG; 1 = 180DEG }
+        07 00 CLKDIV
+    }
+
+    MSC1CDR @ 0xa4 : reg {
+        -- 29 CE
+        -- 28 BUSY
+        -- 27 STOP
+        -- 15 S_CLK1_SEL : enum { 0 = 90DEG; 1 = 180DEG }
+        07 00 CLKDIV
+    }
+
+    USBCDR @ 0x50 : reg {
+        31 30 CLKSRC : enum { 0 = EXCLK; 2 = SCLK_A; 3 = MPLL }
+        -- 29 CE
+        -- 28 BUSY
+        -- 27 STOP
+        // PHY_GATE bit undocumented but present in Ingenic kernel sources,
+        // it's not clear it does anything.
+        -- 26 PHY_GATE
+        07 00 CLKDIV
+    }
+
+    SSICDR @ 0x74 : reg {
+        -- 31 SFC_CS : enum { 0 = SCLK_A; 1 = MPLL }
+        -- 30 SSI_CS : enum { 0 = EXCLK; 1 = HALF_SFC }
+        -- 29 CE
+        -- 28 BUSY
+        -- 27 STOP
+        07 00 CLKDIV
+    }
+
+    CIMCDR @ 0x7c : reg {
+        -- 31 CLKSRC : enum { 0 = SCLK_A; 1 = MPLL }
+        -- 29 CE
+        -- 28 BUSY
+        -- 27 STOP
+        07 00 CLKDIV
+    }
+
+    PCMCDR @ 0x84 : reg {
+        // This definition is based on what's used in the Ingenic kernel
+        // sources; it doesn't match what the programming manual says.
+        // No Rockbox targets use this at present so it's largely untested,
+        // but it is used by dual boot.
+        -- 31 PCS : enum { 0 = SCLK_A; 1 = MPLL }
+        -- 30 CS : enum { 0 = EXCLK; 1 = PLL }
+        -- 29 CE
+        21 13 DIV_M
+        12 00 DIV_N
+    }
+
+    DRCG @ 0xd0 : reg
+    SCRATCH_PROT @ 0x38 : reg
+    SCRATCH @ 0x34 : reg
+
+    USBPCR @ 0x3c : reg {
+        -- 31 USB_MODE : enum { 0 = USB; 1 = OTG }
+        -- 30 AVLD_REG
+        29 28 IDPULLUP_MASK : enum { 2 = ALWAYS; 1 = ALWAYS_SUSPEND; 0 = FROM_OTG }
+        -- 27 INCR_MASK
+        -- 26 TXRISETUNE
+        -- 25 COMMONONN
+        -- 24 VBUSVLDEXT
+        -- 23 VBUSVLDEXTSEL
+        -- 22 POR
+        -- 21 SIDDQ
+        -- 20 OTG_DISABLE
+        19 17 COMPDISTUNE
+        16 14 OTGTUNE
+        13 11 SQRXTUNE
+        10 07 TXFLSTUNE
+        -- 06 TXPREEMPHTUNE
+        05 04 TXHSXVTUNE
+        03 00 TXVREFTUNE
+    }
+
+    USBRDT @ 0x40 : reg {
+        -- 26 HB_MASK
+        -- 25 VBFIL_LD_EN
+        -- 24 IDDIG_EN
+        -- 23 IDDIG_REG
+        22 00 RDT
+    }
+
+    USBVBFIL @ 0x44 : reg {
+        31 16 IDDIGFIL
+        15 00 VBFIL
+    }
+
+    USBPCR1 @ 0x48 : reg {
+        -- 31 BVLD_REG
+        27 26 REFCLK_SEL : enum { 2 = CLKCORE; 1 = EXTERNAL; 0 = CRYSTAL }
+        25 24 REFCLK_DIV : enum { 2 = 48MHZ; 1 = 24MHZ; 0 = 12MHZ }
+        -- 21 PORT_RST
+        -- 19 WORD_IF : enum { 1 = 16BIT; 0 = 8BIT }
+    }
+
+    APCR @ 0x10 : reg {
+        -- 31 BS
+        30 24 PLLM
+        22 18 PLLN
+        17 16 PLLOD
+        -- 15 LOCK
+        -- 10 ON
+        -- 09 BYPASS
+        -- 08 ENABLE
+        07 00 PLLST
+    }
+
+    MPCR @ 0x14 : reg {
+        -- 31 BS
+        30 24 PLLM
+        22 18 PLLN
+        17 16 PLLOD
+        -- 07 ENABLE
+        -- 06 BYPASS
+        -- 01 LOCK
+        -- 00 ON
+    }
+
+    LCR @ 0x04 : reg {
+        19 08 PST
+        01 00 LPM : enum { 0 = IDLE; 1 = SLEEP }
+    }
+
+    PSWC0ST @ 0x90 : reg
+    PSWC1ST @ 0x94 : reg
+    PSWC2ST @ 0x98 : reg
+    PSWC3ST @ 0x9c : reg
+
+    CLKGR @ 0x20 : reg {
+        31 DDR
+        30 CPU_BIT
+        29 AHB0
+        28 APB0
+        27 RTC
+        26 PCM
+        25 MAC
+        24 AES
+        23 LCD
+        22 CIM
+        21 PDMA
+        20 OST
+        19 SSI
+        18 TCU
+        17 DMIC
+        16 UART2
+        15 UART1
+        14 UART0
+        12 JPEG
+        11 AIC
+        09 I2C2
+        08 I2C1
+        07 I2C0
+        06 SCC
+        05 MSC1
+        04 MSC0
+        03 OTG
+        02 SFC
+        01 EFUSE
+    }
+
+    SRBC @ 0xc4 : reg {
+        31 JPEG_SR
+        30 JPEG_STOP
+        29 JPEG_ACK
+        25 LCD_SR
+        24 LCD_STOP
+        23 LCD_ACK
+        21 CIM_STOP
+        20 CIM_ACK
+        15 CPU_STOP
+        14 CPU_ACK
+        12 OTG_SR
+        08 AHB2_STOP
+        07 AHB2_ACK
+        06 DDR_STOP
+        05 DDR_ACK
+    }
+
+    OPCR @ 0x24 : reg {
+        -- 31 IDLE_DIS
+        -- 30 MASK_INT
+        -- 29 MASK_VPU
+        -- 28 GATE_SCLK_A_BUS
+        -- 25 L2C_PD
+        -- 24 REQ_MODE
+        -- 23 GATE_USBPHY_CLK
+        -- 22 DIS_STOP_MUX
+        19 08 O1ST
+        -- 07 SPENDN0
+        -- 06 SPENDN1
+        -- 05 CPU_MODE
+        -- 04 O1SE
+        -- 03 PD
+        -- 02 ERCS
+        -- 01 BUS_MODE
+    }
+
+    RSR @ 0x08 : reg {
+        03 HR
+        02 P0R
+        01 WR
+        00 PR
+    }
+}
+
+GPIO @ 0xb0010000 [8; 0x0100] : block {
+    PIN      @ 0x00 : reg
+    INT      @ 0x10 : reg
+    INT_SET  @ 0x14 : reg
+    INT_CLR  @ 0x18 : reg
+    MSK      @ 0x20 : reg
+    MSK_SET  @ 0x24 : reg
+    MSK_CLR  @ 0x28 : reg
+    PAT1     @ 0x30 : reg
+    PAT1_SET @ 0x34 : reg
+    PAT1_CLR @ 0x38 : reg
+    PAT0     @ 0x40 : reg
+    PAT0_SET @ 0x44 : reg
+    PAT0_CLR @ 0x48 : reg
+    FLAG     @ 0x50 : reg
+    FLAG_CLR @ 0x58 : reg
+    PULL     @ 0x70 : reg
+    PULL_SET @ 0x74 : reg
+    PULL_CLR @ 0x78 : reg
+
+    // Port Z atomic load register
+    GID2LD   @ 0xf0 : reg
+}
+
+UART @ 0xb0030000 [3; 0x1000] : block {
+    URBR @ 0x00 : reg
+    UTHR @ 0x00 : reg
+    UDLLR @ 0x00 : reg
+    UDLHR @ 0x04 : reg
+    UIER @ 0x04 : reg
+    UIIR @ 0x08 : reg
+    UMCR @ 0x10 : reg
+    ULSR @ 0x14 : reg
+    UMSR @ 0x18 : reg
+    USPR @ 0x1c : reg
+    UMR @ 0x24 : reg
+    UACR @ 0x28 : reg
+    URCR @ 0x40 : reg
+    UTCR @ 0x44 : reg
+
+    UFCR @ 0x08 : reg {
+        07 06 RDTR : enum { 0 = 1BYTE; 1 = 16BYTE; 2 = 32BYTE; 3 = 60BYTE }
+        -- 04 UME
+        -- 03 DME
+        -- 02 TFRT
+        -- 01 RFRT
+        -- 00 FME
+    }
+
+    ULCR @ 0x0c : reg {
+        -- 07 DLAB
+        -- 06 SBK
+        -- 05 STPAR
+        -- 04 PARM : enum { 0 = ODD; 1 = EVEN }
+        -- 03 PARE
+        -- 02 SBLS : enum { 0 = 1_STOP_BIT; 1 = 2_STOP_BITS }
+        01 00 WLS : enum { 0 = 5BITS; 1 = 6BITS; 2 = 7BITS; 3 = 8BITS }
+    }
+
+    ISR @ 0x20 : reg {
+        04 RDPL
+        03 TDPL
+        02 XMODE
+        01 RCVEIR
+        00 XMITIR
+    }
+}
+
+DMA @ 0xb3421000 : block {
+    CTRL @ 0x00 : reg {
+        31 FMSC
+        30 FSSI
+        29 FTSSI
+        28 FUART
+        27 FAIC
+        03 HALT
+        02 AR
+        00 ENABLE
+    }
+
+    IRQP   @ 0x04 : reg
+    DB     @ 0x08 : reg
+    DB_SET @ 0x0c : reg
+    DIP    @ 0x10 : reg
+    DIC    @ 0x14 : reg
+}
+
+DMA_CHN @ 0xb3420000 [8; 0x20] : block {
+    SA @ 0x00 : reg
+    TA @ 0x04 : reg
+
+    TC @ 0x08 : reg {
+        31 24 DOA
+        23 00 CNT
+    }
+
+    RT @ 0x0c : reg {
+        05 00 TYPE : enum {
+            05 = DMIC_RX
+            06 = I2S_TX
+            07 = I2S_RX
+            08 = AUTO
+            16 = UART2_TX
+            17 = UART2_RX
+            18 = UART1_TX
+            19 = UART1_RX
+            20 = UART0_TX
+            21 = UART0_RX
+            22 = SSI_TX
+            23 = SSI_RX
+            26 = MSC0_TX
+            27 = MSC0_RX
+            28 = MSC1_TX
+            29 = MSC1_RX
+            32 = PCM_TX
+            33 = PCM_RX
+            36 = I2C0_TX
+            37 = I2C0_RX
+            38 = I2C1_TX
+            39 = I2C1_RX
+            40 = I2C2_TX
+            41 = I2C2_RX
+        }
+    }
+
+    CS @ 0x10 : reg {
+        -- 31 NDES
+        -- 30 DES8
+        15 08 CDOA
+        -- 04 AR
+        -- 03 TT
+        -- 02 HLT
+        -- 00 CTE
+    }
+
+    enum PORT_WIDTH {
+        0 = 32BIT
+        1 = 8BIT
+        2 = 16BIT
+    }
+
+    CM @ 0x14 : reg {
+        -- 23 SAI
+        -- 22 DAI
+        19 16 RDIL
+        15 14 SP : PORT_WIDTH
+        13 12 DP : PORT_WIDTH
+        10 08 TSZ : enum { 0 = 32BIT; 1 = 8BIT; 2 = 16BIT;
+                           3 = 16BYTE; 4 = 32BYTE; 5 = 64BYTE;
+                           6 = 128BYTE; 7 = AUTO }
+        -- 02 STDE
+        -- 01 TIE
+        -- 00 LINK
+    }
+
+    DA @ 0x18 : reg {
+        31 12 DBA
+        11 04 DOA
+    }
+
+    SD @ 0x1c : reg {
+        31 16 TSD
+        15 00 SSD
+    }
+}
+
+I2C @ 0xb0050000 [3; 0x1000] : block {
+    CON @ 0x00 : reg {
+        -- 06 SLVDIS
+        -- 05 RESTART
+        -- 04 MATP
+        -- 03 SATP
+        02 01 SPEED : enum { 1 = 100K; 2 = 400K }
+        -- 00 MD
+    }
+
+    DC @ 0x10 : reg {
+        -- 10 RESTART
+        -- 09 STOP
+        -- 08 CMD
+        07 00 DAT
+    }
+
+    reg INT_COMMON {
+        11 GC
+        10 STT
+        09 STP
+        08 ACT
+        07 RXDN
+        06 TXABT
+        05 RDREQ
+        04 TXEMP
+        03 TXOF
+        02 RXFL
+        01 RXOF
+        00 RXUF
+    }
+
+    INTST @ 0x2c : INT_COMMON
+    INTMSK @ 0x30 : INT_COMMON
+    RINTST @ 0x34 : INT_COMMON
+
+    ENABLE @ 0x6c : reg {
+        01 ABORT
+        00 ACTIVE
+    }
+
+    STATUS @ 0x70 : reg {
+        06 SLVACT
+        05 MSTACT
+        04 RFF
+        03 RFNE
+        02 TFE
+        01 TFNF
+        00 ACT
+    }
+
+    ENBST @ 0x9c : reg {
+        02 SLVRDLST
+        01 SLVDISB
+        00 ACTIVE
+    }
+
+    TAR @ 0x04 : reg {
+        -- 12 10BITS
+        -- 11 SPECIAL
+        -- 10 GC_OR_START
+        09 00 ADDR
+    }
+
+    SHCNT @ 0x14 : reg
+    SLCNT @ 0x18 : reg
+    FHCNT @ 0x1c : reg
+    FLCNT @ 0x20 : reg
+    RXTL @ 0x38 : reg
+    TXTL @ 0x3c : reg
+    TXFLR @ 0x74 : reg
+    RXFLR @ 0x78 : reg
+    SDAHD @ 0x7c : reg
+    SDASU @ 0x94 : reg
+
+    CINT @ 0x40 : reg
+    CRXUF @ 0x44 : reg
+    CRXOF @ 0x48 : reg
+    CTXOF @ 0x4c : reg
+    CRXREQ @ 0x50 : reg
+    CTXABT @ 0x54 : reg
+    CRXDN @ 0x58 : reg
+    CACT @ 0x5c : reg
+    CSTP @ 0x60 : reg
+    CSTT @ 0x64 : reg
+    CGC @ 0x68 : reg
+}
+
+OST @ 0xb2000000 : block {
+    CTRL @ 0x00 : reg {
+        enum PRESCALER {
+            0 = BY_1
+            1 = BY_4
+            2 = BY_16
+        }
+
+        03 02 PRESCALE2 : PRESCALER
+        01 00 PRESCALE1 : PRESCALER
+    }
+
+    reg EN_REG {
+        01 OST2
+        00 OST1
+    }
+
+    ENABLE @ 0x04 : EN_REG
+    CLEAR  @ 0x08 : EN_REG
+    ENABLE_SET @ 0x34 : EN_REG
+    ENABLE_CLR @ 0x38 : EN_REG
+
+    1FLG @ 0x0c : reg
+    1MSK @ 0x10 : reg
+    1DFR @ 0x14 : reg
+    1CNT @ 0x18 : reg
+
+    2CNTH @ 0x1c : reg
+    2CNTL @ 0x20 : reg
+    2CNTHB @ 0x24 : reg
+}
+
+SFC @ 0xb3440000 : block {
+    GLB @ 0x00 : reg {
+        -- 13 TRAN_DIR : enum { 0 = READ; 1 = WRITE }
+        12 07 THRESHOLD
+        -- 06 OP_MODE : enum { 0 = SLAVE; 1 = DMA }
+        05 03 PHASE_NUM
+        -- 02 WP_EN
+        01 00 BURST_MD : enum { 0 = INCR4; 1 = INCR8; 2 = INCR16; 3 = INCR32 }
+    }
+
+    DEV_CONF @ 0x04 : reg {
+        17 16 SMP_DELAY
+        -- 15 CMD_TYPE : enum { 0 = 8BITS; 1 = 16BITS }
+        14 13 STA_TYPE : enum { 0 = 1BYTE; 1 = 2BYTE; 2 = 3BYTE; 4 = 4BYTE }
+        12 11 THOLD
+        10 09 TSETUP
+        08 05 TSH
+        -- 04 CPHA
+        -- 03 CPOL
+        -- 02 CE_DL
+        -- 01 HOLD_DL
+        -- 00 WP_DL
+    }
+
+    TRAN_CONF @ 0x14 [6; 0x04] : reg {
+        31 29 MODE
+        28 26 ADDR_WIDTH
+        -- 25 POLL_EN
+        -- 24 CMD_EN
+        -- 23 PHASE_FMT
+        22 17 DUMMY_BITS
+        -- 16 DATA_EN
+        15 00 COMMAND
+    }
+}
+
+TCU @ 0xb0002000 : block {
+    STATUS @ 0xf0 : reg
+    STATUS_SET @ 0xf4 : reg
+    STATUS_CLR @ 0xf8 : reg
+
+    STOP @ 0x1c : reg
+    STOP_SET @ 0x2c : reg
+    STOP_CLR @ 0x3c : reg
+
+    ENABLE @ 0x10 : reg
+    ENABLE_SET @ 0x14 : reg
+    ENABLE_CLR @ 0x18 : reg
+
+    FLAG @ 0x20 : reg
+    FLAG_SET @ 0x24 : reg
+    FLAG_CLR @ 0x28 : reg
+
+    MASK @ 0x30 : reg
+    MASK_SET @ 0x34 : reg
+    MASK_CLR @ 0x38 : reg
+
+    CMP_FULL @ 0x40 [8; 0x10] : reg
+    CMP_HALF @ 0x44 [8; 0x10] : reg
+    COUNT @ 0x48 [8; 0x10] : reg
+    CTRL @ 0x4c [8; 0x10] : reg {
+        -- 11 BYPASS
+        -- 10 CLRZ
+        -- 09 SHUTDOWN : enum { 0 = GRACEFUL; 1 = ABRUPT }
+        -- 08 INIT_LVL
+        -- 07 PWM_EN
+        -- 06 PWM_IN_EN
+        05 03 PRESCALE : enum { 0 = BY_1; 1 = BY_4; 2 = BY_16; 3 = BY_64; 4 = BY_256; 5 = BY_1024 }
+        02 00 SOURCE : enum { 1 = PCLK; 2 = RTC; 4 = EXT }
+    }
+}
