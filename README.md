@@ -498,8 +498,18 @@ while instances in blocks generate offset macros.
 // Arrayed instance offset
 #define ITO_{INSTNAME}(i) (offset + (i) * stride)
 
-// Instance type name; only defined if instance has register type
-#define ITN_{INSTNAME} {TYPENAME}
+// Instance type name; only defined if instance has register type.
+// Has same arguments (or lack thereof) as the 'ITA_' / 'ITO_' macros.
+// Not defined if the instance register is anonymous.
+#define ITNA_{INSTNAME}(...) {TYPENAME}
+#define ITNO_{INSTNAME}(...) {TYPENAME}
+
+// Instance access type; only defined if instance has register type.
+// Has same arguments (or lack thereof) as the 'ITA_' / 'ITO_' macros.
+// If the instance register is anonymous, then expands directly to
+// a uintN_t type matching the width of the anonymous register.
+#define ITTA_{INSTNAME}(...) RTYPE_{TYPENAME}
+#define ITTO_{INSTNAME}(...) RTYPE_{TYPENAME}
 ```
 
 The string `{INSTNAME}` is replaced by the instance name.

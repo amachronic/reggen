@@ -136,7 +136,8 @@ static void write_instance_macros(struct output_writer *wr,
     const char *addr_literal_suffix = get_word_literal_suffix(wr->ctx, WIDTH_ADDRESS);
     const char *addr_macro_prefix = enclosing_type ? wr->ctx->config.instance_offset_macro_prefix
                                                    : wr->ctx->config.instance_address_macro_prefix;
-    const char *macro_args = NULL;
+    const char *offset_macro_args = "";
+    const char *address_macro_args = "";
     const char *instname = instance->comm.name;
     if (enclosing_type)
         instname = intern_stringf(wr->ctx, "%s_%s", enclosing_type->name, instname);
@@ -146,13 +147,13 @@ static void write_instance_macros(struct output_writer *wr,
     {
         if (instance->count == 1)
         {
-            macro_args = "";
+            offset_macro_args = "";
             output_addcol(wr->file, 1, " 0x%" PRIX64 "%s",
                           instance->offset, addr_literal_suffix);
         }
         else
         {
-            macro_args = "(i)";
+            offset_macro_args = "(i)";
             output_addcol(wr->file, 1, " (0x%" PRIX64 "%s + (i) * 0x%" PRIX64 "%s)",
                           instance->offset, addr_literal_suffix,
                           instance->stride, addr_literal_suffix);
@@ -161,7 +162,7 @@ static void write_instance_macros(struct output_writer *wr,
         output_addcol(wr->file, 0, "#define %s%s%s%s",
                       addr_macro_prefix,
                       wr->ctx->config.implicit_type_prefix,
-                      instname, macro_args);
+                      instname, offset_macro_args);
         output_newline(wr->file);
     }
 
@@ -169,7 +170,8 @@ static void write_instance_macros(struct output_writer *wr,
      * Generate address macro if the instance can only be accessed
      * through a unique path (which may contain arrayed instances).
      */
-    if (instance->path_count == 1)
+    bool has_address_macro = (instance->path_count == 1);
+    if (has_address_macro)
     {
         output_addcol(wr->file, 0, "#define %s%s%s",
                       wr->ctx->config.instance_address_macro_prefix,
@@ -208,7 +210,16 @@ static void write_instance_macros(struct output_writer *wr,
         array_pop(&wr->instance_path);
 
         if (argindex > 0)
+        {
+            /*
+             * cheat a little bit; the ITTA and ITNA macros don't
+             * use their macro arguments, they just need to have a
+             * compatible signature with the address macro, which
+             * varargs will always be.
+             */
+            address_macro_args = "(...)";
             output_addcol(wr->file, 0, ")");
+        }
 
         output_addcol(wr->file, 1, ")");
         output_newline(wr->file);
@@ -219,13 +230,48 @@ static void write_instance_macros(struct output_writer *wr,
         hashmap_size(&instance->comm.type->members) > 0)
     {
         output_addcol(wr->file, 0, "#define %s%s%s%s",
-                      wr->ctx->config.instance_name_macro_prefix,
+                      wr->ctx->config.instance_name_offset_macro_prefix,
                       wr->ctx->config.implicit_type_prefix,
-                      instname, macro_args);
+                      instname, offset_macro_args);
         output_addcol(wr->file, 1, " %s%s",
                       wr->ctx->config.implicit_type_prefix,
                       instance->comm.type->name);
         output_newline(wr->file);
+
+        if (has_address_macro)
+        {
+            output_addcol(wr->file, 0, "#define %s%s%s%s",
+                          wr->ctx->config.instance_name_address_macro_prefix,
+                          wr->ctx->config.implicit_type_prefix,
+                          instname, address_macro_args);
+            output_addcol(wr->file, 1, " %s%s",
+                          wr->ctx->config.implicit_type_prefix,
+                          instance->comm.type->name);
+            output_newline(wr->file);
+        }
+    }
+
+    /* Access type macro: expands to the uintN_t of the target register type */
+    if (instance->comm.type->type == TYPE_REG)
+    {
+        int num_bits = get_word_bits(wr->ctx, instance->comm.type->width);
+
+        output_addcol(wr->file, 0, "#define %s%s%s%s",
+                      wr->ctx->config.instance_type_offset_macro_prefix,
+                      wr->ctx->config.implicit_type_prefix,
+                      instname, offset_macro_args);
+        output_addcol(wr->file, 1, " uint%d_t", num_bits);
+        output_newline(wr->file);
+
+        if (has_address_macro)
+        {
+            output_addcol(wr->file, 0, "#define %s%s%s%s",
+                          wr->ctx->config.instance_type_address_macro_prefix,
+                          wr->ctx->config.implicit_type_prefix,
+                          instname, address_macro_args);
+            output_addcol(wr->file, 1, " uint%d_t", num_bits);
+            output_newline(wr->file);
+        }
     }
 }
 

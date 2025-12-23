@@ -146,7 +146,10 @@ struct config
     const char *field_valmask_macro_prefix;
     const char *instance_address_macro_prefix;
     const char *instance_offset_macro_prefix;
-    const char *instance_name_macro_prefix;
+    const char *instance_name_address_macro_prefix;
+    const char *instance_name_offset_macro_prefix;
+    const char *instance_type_address_macro_prefix;
+    const char *instance_type_offset_macro_prefix;
 
     /* Output directory name */
     const char *output_directory;
